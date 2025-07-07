@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="MacWindowTemplate.MacWindowTemplateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MacWindowTemplate">
+
+    <!-- Mac風ウィンドウテンプレート -->
+    <Border Style="{StaticResource MacWindowContainer}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <!-- タイトルバー -->
+                <RowDefinition Height="*"/>
+                <!-- コンテンツエリア -->
+            </Grid.RowDefinitions>
+
+            <!-- タイトルバー -->
+            <Border Grid.Row="0" Style="{StaticResource MacTitleBar}" x:Name="TitleBar">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- トラフィックライトボタン -->
+                    <StackPanel Grid.Column="0" 
+                                Orientation="Horizontal" 
+                                VerticalAlignment="Center" 
+                                Margin="16,0,0,0">
+                        <Button x:Name="CloseButton" 
+                                Style="{StaticResource MacTrafficLightButton}" 
+                                Background="{StaticResource MacRedBrush}"
+                                Click="CloseButton_Click"/>
+                        <Button x:Name="MinimizeButton" 
+                                Style="{StaticResource MacTrafficLightButton}" 
+                                Background="{StaticResource MacYellowBrush}"
+                                Click="MinimizeButton_Click"/>
+                        <Button x:Name="MaximizeButton" 
+                                Style="{StaticResource MacTrafficLightButton}" 
+                                Background="{StaticResource MacGreenBrush}"
+                                Click="MaximizeButton_Click"/>
+                    </StackPanel>
+
+                    <!-- ウィンドウタイトル -->
+                    <TextBlock x:Name="WindowTitleTextBlock" 
+                               Grid.Column="1" 
+                               Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                               FontSize="14" 
+                               FontWeight="Medium"
+                               FontFamily="{StaticResource MacFontFamily}"
+                               Foreground="{StaticResource MacTextBrush}"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+
+                    <!-- ツールバーエリア -->
+                    <ContentPresenter x:Name="ToolbarContentPresenter"
+                                      Grid.Column="2"
+                                      Content="{Binding ToolbarContent, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      Margin="0,0,16,0"/>
+                </Grid>
+            </Border>
+
+            <!-- メインコンテンツエリア -->
+            <ContentPresenter x:Name="MainContentPresenter"
+                              Grid.Row="1"
+                              Content="{Binding MainContent, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </Border>
+</UserControl>
