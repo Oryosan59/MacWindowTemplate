@@ -1,12 +1,238 @@
-﻿<Window x:Class="MacWindowTemplate.MainWindow"
+<!-- MainWindow.xaml - サンプルアプリケーション -->
+<Window x:Class="MacWindowTemplate.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MacWindowTemplate"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Mac Notes App" Height="700" Width="1000"
+        Style="{StaticResource MacWindowStyle}"
+        WindowStartupLocation="CenterScreen">
 
-    </Grid>
+    <local:MacWindowTemplateControl WindowTitle="Mac Notes App">
+        <local:MacWindowTemplateControl.MainContent>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- サイドバー -->
+                <Border Grid.Column="0" Style="{StaticResource MacSidebar}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- サイドバーヘッダー -->
+                        <Border Grid.Row="0" Padding="16,20,16,16">
+                            <TextBlock Text="📝 Notes" 
+                                       Style="{StaticResource MacHeaderText}"/>
+                        </Border>
+
+                        <!-- ナビゲーションメニュー -->
+                        <StackPanel Grid.Row="1" Margin="8,0">
+                            <Button Content="📋 All Notes" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="AllNotesButton_Click"/>
+                            <Button Content="⭐ Favorites" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="FavoritesButton_Click"/>
+                            <Button Content="📁 Work" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="WorkButton_Click"/>
+                            <Button Content="🏠 Personal" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="PersonalButton_Click"/>
+                            <Button Content="💡 Ideas" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="IdeasButton_Click"/>
+
+                            <!-- セパレーター -->
+                            <Border Style="{StaticResource MacSeparator}"/>
+
+                            <Button Content="🗑️ Trash" 
+                                    Style="{StaticResource MacSidebarButton}"
+                                    Click="TrashButton_Click"/>
+                        </StackPanel>
+
+                        <!-- サイドバーフッター -->
+                        <Border Grid.Row="2" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Storage" 
+                                           Style="{StaticResource MacSmallText}"/>
+                                <TextBlock Text="2.1 GB of 5 GB used" 
+                                           Style="{StaticResource MacSmallText}"
+                                           Margin="0,4,0,0"/>
+                                <ProgressBar Value="42" 
+                                             Height="4" 
+                                             Margin="0,8,0,0"
+                                             Background="{StaticResource MacSeparatorBrush}"
+                                             Foreground="{StaticResource MacAccentBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- メインコンテンツエリア -->
+                <Grid Grid.Column="1" Background="{StaticResource MacContentBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- コンテンツヘッダー -->
+                    <Border Grid.Row="0" 
+                            Background="{StaticResource MacSecondaryBrush}"
+                            BorderBrush="{StaticResource MacSeparatorBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="24,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding SectionTitleText}" 
+                                           Style="{StaticResource MacHeaderText}"/>
+                                <TextBlock Text="{Binding SectionSubtitleText}" 
+                                           Style="{StaticResource MacSecondaryText}"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="🔍" 
+                                        Style="{StaticResource MacSecondaryButton}"
+                                        Click="SearchButton_Click"
+                                        ToolTip="Search notes"/>
+                                <Button Content="⚙️" 
+                                        Style="{StaticResource MacSecondaryButton}"
+                                        Margin="8,0,0,0"
+                                        Click="SettingsButton_Click"
+                                        ToolTip="Settings"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ノート一覧 -->
+                    <ScrollViewer Grid.Row="1" 
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding CurrentNotes}" Margin="24">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource MacCard}" 
+                                            Margin="0,0,0,16"
+                                            MouseLeftButtonDown="NoteCard_Click"
+                                            Cursor="Hand">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- ノートヘッダー -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" 
+                                                           Text="{Binding Title}" 
+                                                           Style="{StaticResource MacBodyText}"
+                                                           FontWeight="SemiBold"/>
+                                                <TextBlock Grid.Column="1" 
+                                                           Text="{Binding Date}" 
+                                                           Style="{StaticResource MacSmallText}"/>
+                                            </Grid>
+
+                                            <!-- ノート内容 -->
+                                            <TextBlock Grid.Row="1" 
+                                                       Text="{Binding Content}" 
+                                                       Style="{StaticResource MacSecondaryText}"
+                                                       TextWrapping="Wrap"
+                                                       MaxHeight="80"
+                                                       Margin="0,0,0,12"/>
+
+                                            <!-- ノートフッター -->
+                                            <Grid Grid.Row="2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                    <Border Background="{StaticResource MacAccentBrush}" 
+                                                            CornerRadius="8" 
+                                                            Padding="8,4">
+                                                        <TextBlock Text="{Binding Category}" 
+                                                                   Style="{StaticResource MacSmallText}"
+                                                                   Foreground="White"/>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="⭐" 
+                                                            Style="{StaticResource MacSecondaryButton}"
+                                                            Padding="8,4"
+                                                            FontSize="12"
+                                                            Click="FavoriteButton_Click"
+                                                            ToolTip="Add to favorites"/>
+                                                    <Button Content="🗑️" 
+                                                            Style="{StaticResource MacSecondaryButton}"
+                                                            Padding="8,4"
+                                                            FontSize="12"
+                                                            Margin="4,0,0,0"
+                                                            Click="DeleteButton_Click"
+                                                            ToolTip="Delete note"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- 空の状態 -->
+                    <Border Grid.Row="1" 
+                            Visibility="{Binding EmptyStateVisibility}">
+                        <StackPanel HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="{Binding EmptyStateIcon}" 
+                                       FontSize="64" 
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,16"/>
+                            <TextBlock Text="{Binding EmptyStateTitle}" 
+                                       Style="{StaticResource MacHeaderText}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding EmptyStateSubtitle}" 
+                                       Style="{StaticResource MacSecondaryText}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,8,0,24"/>
+                            <Button Content="Create Note" 
+                                    Style="{StaticResource MacPrimaryButton}"
+                                    Click="CreateNoteButton_Click"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </local:MacWindowTemplateControl.MainContent>
+
+        <!-- ツールバー -->
+        <local:MacWindowTemplateControl.ToolbarContent>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="+ New Note" 
+                        Style="{StaticResource MacPrimaryButton}"
+                        Click="CreateNoteButton_Click"/>
+                <Button Content="Import" 
+                        Style="{StaticResource MacSecondaryButton}"
+                        Margin="8,0,0,0"
+                        Click="ImportButton_Click"/>
+            </StackPanel>
+        </local:MacWindowTemplateControl.ToolbarContent>
+    </local:MacWindowTemplateControl>
 </Window>
